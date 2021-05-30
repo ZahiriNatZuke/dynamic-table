@@ -1,0 +1,32 @@
+.table-container {
+    padding: 1rem;
+}
+
+table {
+    width: 100%;
+}
+
+.overflow-x {
+    overflow-x: scroll;
+}
+
+.spinner-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    flex: 1 0 auto;
+}
+
+.bullet-list {
+    padding: 10px 10px 10px 30px;
+    margin: 0;
+}
+
+.center {
+    text-align: center;
+}
+
+.mat-column-op {
+    width: 10% !important;
+}

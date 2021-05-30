@@ -1,0 +1,121 @@
+<dt-filter-database *ngIf="showFilter"></dt-filter-database>
+
+<div [ngClass]="{'mat-elevation-z8': canSticky && !(isLoading$ | async), 'table-container': !canSticky}">
+    <div [class]="!(isLoading$ | async) ? canSticky ? 'overflow-x' : 'mat-elevation-z8' : ''">
+
+        <table mat-table matSort [dataSource]="dataSource" *ngIf="!(isLoading$ | async); else loading">
+
+            <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column.column"
+                          [sticky]="canBeStartSticky(column.column)" [stickyEnd]="canBeEndSticky(column.column)">
+
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column.column}}">
+                    <div [innerHTML]="column.header"></div>
+                </th>
+
+                <td mat-cell *matCellDef="let element" [class]="column.type === columnType.Boolean ? 'center' : ''"
+                    [style.fontSize.px]="12">
+                    <!--se muestra la columna según el `type` que se le definió-->
+                    <span *ngIf="column.type === columnType.Regular">
+                        {{element | nestedProperty:column.column}}
+                    </span>
+
+                    <span *ngIf="column.type === columnType.Concat">
+                        {{dynamicTableService.mapData(element | nestedProperty:column.column, column.prop)}}
+                    </span>
+
+                    <ul class="bullet-list" *ngIf="column.type === columnType.Bullets">
+                        <li *ngFor="let item of element | nestedProperty:column.column">
+                            <span *ngIf="column.prop">{{item[column.prop]}}</span>
+                        </li>
+                    </ul>
+
+                    <span *ngIf="column.type === columnType.Boolean">
+                        <mat-icon class="material-icons-outlined"
+                                  [style.color]="(element | nestedProperty:column.column) ? 'green' : 'red'">
+                            {{(element | nestedProperty:column.column) ? 'check' : 'cancel'}}
+                        </mat-icon>
+                    </span>
+
+                    <span *ngIf="column.type === columnType.Date">
+                        {{dynamicTableService.convertDateUTCToLocaleDateTime(element | nestedProperty:column.column)}}
+                    </span>
+
+                </td>
+            </ng-container>
+
+            <ng-container *ngIf="showOpCRUD || showOpExport || showOpSelect" matColumnDef="op"
+                          [stickyEnd]="canBeEndSticky('op')">
+                <th mat-header-cell *matHeaderCellDef>
+                    <button *ngIf="showOpNew" mat-icon-button (click)="option(typeOpEvent.New)">
+                        <mat-icon>{{OptionSettings.iconNew}}</mat-icon>
+                    </button>
+                    <button *ngIf="showOpSelect" mat-icon-button [matMenuTriggerFor]="matMenuExport">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <button *ngIf="showOpExport" mat-icon-button (click)="exportToCSV()">
+                        <mat-icon>import_export</mat-icon>
+                    </button>
+                    <mat-menu #matMenuExport [hasBackdrop]="true">
+                        <dt-column-selector></dt-column-selector>
+                    </mat-menu>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <button *ngIf="showOpCRUD" mat-icon-button [matMenuTriggerFor]="matMenuCRUD">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #matMenuCRUD="matMenu">
+                        <button mat-menu-item (click)="option(typeOpEvent.Update, row)" *ngIf="showOpEdit">
+                            <mat-icon class="material-icons-outlined" style="color:#388E3C">
+                                {{OptionSettings.Update.icon}}
+                            </mat-icon>
+                            {{OptionSettings.Update.literal}}
+                        </button>
+                        <button mat-menu-item (click)="option(typeOpEvent.Delete, row)" *ngIf="showOpDelete">
+                            <mat-icon class="material-icons-outlined" style="color:#F44336">
+                                {{OptionSettings.Delete.icon}}
+                            </mat-icon>
+                            {{OptionSettings.Delete.literal}}
+                        </button>
+                    </mat-menu>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+            <!-- Group header -->
+            <ng-container matColumnDef="groupHeader">
+                <td colspan="999" mat-cell *matCellDef="let group">
+                    <mat-icon [style.paddingLeft.ex]="((group.level-1))" style="padding-right: 1ex">
+                        {{group['expanded'] ? 'expand_less' : 'expand_more'}}
+                    </mat-icon>
+                    <strong>{{group.label}}</strong>
+                </td>
+            </ng-container>
+
+            <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: matGroupBy.isGroup" style="cursor:pointer"
+                (click)="matGroupBy.toggleExpanded(row)">
+            </tr>
+
+        </table>
+
+        <mat-paginator *ngIf="!(isLoading$ | async) && !canSticky && showPaginator" class="w-100"
+                       [length]="dataSource.data.length"
+                       [pageSize]="PaginatorSettings.pageSize" [pageSizeOptions]="PaginatorSettings.pageSizeOptions">
+        </mat-paginator>
+
+        <ng-template #loading>
+            <div class="spinner-container">
+                <mat-progress-spinner [color]="SpinnerSettings.color" value="75" mode="indeterminate"
+                                      [strokeWidth]="SpinnerSettings.strokeWidth" [diameter]="SpinnerSettings.diameter">
+                </mat-progress-spinner>
+            </div>
+        </ng-template>
+
+    </div>
+
+    <mat-paginator *ngIf="!(isLoading$ | async) && canSticky && showPaginator" class="w-100"
+                   [length]="dataSource.data.length"
+                   [pageSize]="PaginatorSettings.pageSize" [pageSizeOptions]="PaginatorSettings.pageSizeOptions">
+    </mat-paginator>
+</div>

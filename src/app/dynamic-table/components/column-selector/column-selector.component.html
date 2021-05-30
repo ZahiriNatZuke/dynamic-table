@@ -1,0 +1,17 @@
+<section class="section-container" (click)="$event.stopPropagation()">
+    <mat-form-field [appearance]="SelectorSettings.appearance">
+        <mat-label>{{SelectorSettings.label}}</mat-label>
+        <mat-select multiple [(ngModel)]="selectedValues" (selectionChange)="catchChanges()">
+            <mat-select-trigger>
+                {{selectedValues.length > 0 ? selectedValues[0] : ''}}
+                <span *ngIf="selectedValues.length > 1" class="additional-selection">
+                    (+{{selectedValues.length - 1}}
+                    {{selectedValues.length === 2 ? SelectorSettings.singularLiteral : SelectorSettings.pluralLiteral}})
+                </span>
+            </mat-select-trigger>
+            <mat-option *ngFor="let item of columnList" [value]="item.column">{{item.header}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</section>
+
+
