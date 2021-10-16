@@ -55,7 +55,6 @@ export class AppComponent implements OnInit {
         groupingColumns: [],
         showOpCRUD: true,
         showOpEdit: true,
-        showOpExport: false,
         urlData: this.urlData,
         showOpNew: true,
         showOpDelete: true,
@@ -63,11 +62,13 @@ export class AppComponent implements OnInit {
             iconNew: 'add_circle_outlined',
             Update: {
                 icon: 'edit',
-                literal: 'Update'
+                literal: 'Update',
+                color: '#388E3C'
             },
             Delete: {
                 icon: 'delete_outlined',
-                literal: 'Delete'
+                literal: 'Delete',
+                color: '#F44336'
             }
         },
         SpinnerSettings: {
@@ -108,7 +109,6 @@ export class AppComponent implements OnInit {
             }
         }
     };
-    private reportName: string = 'CSV_report_example';
 
     constructor(private dynamicTableService: DynamicTableService) {
         this.dynamicTableService.configTable = this.inputConfig;
@@ -128,9 +128,5 @@ export class AppComponent implements OnInit {
             case TypeOpEvent.Delete:
                 break;
         }
-    }
-
-    public exportCSV(): void {
-        this.dynamicTableService.ExportDataToCSV(this.reportName);
     }
 }

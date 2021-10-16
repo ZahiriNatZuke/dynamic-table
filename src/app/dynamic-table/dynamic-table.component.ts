@@ -24,37 +24,31 @@ import {ConfirmMessageComponent} from './components/confirm-message/confirm-mess
 export class DynamicTableComponent implements OnInit {
 
     @Output() operationEvent: EventEmitter<OperationEvent> = new EventEmitter<OperationEvent>();
-    @Output() exportCsvEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
     public dataSource = new MatTableDataSource<any>();
     public isLoading$ = new Observable<boolean>();
 
     public columnType = ColumnType;
     public typeOpEvent = TypeOpEvent;
-
-    private inputConfig: InputConfig | undefined;
     public displayedColumns: Column[] = [];
     public columns: string[] = [];
-    private groupingColumns: GroupingColumn[] = [];
-    private urlData = '';
     public showOpCRUD = false;
-    public showOpExport = false;
     public showOpNew: boolean | undefined = false;
     public showOpEdit: boolean | undefined = false;
     public showOpDelete: boolean | undefined = false;
     public showOpSelect: boolean | undefined = false;
-    private dataField: string | null = null;
     public canSticky: boolean | undefined = false;
     public startFieldSticky: string | undefined;
-    private endFieldSticky: string | undefined;
     public OptionSettings: OptionSettings = {
         iconNew: 'add_circle',
         Update: {
             icon: 'edit',
-            literal: 'Actualizar'
+            literal: 'Actualizar',
+            color: '#388E3C'
         },
         Delete: {
             icon: 'delete',
-            literal: 'Eliminar'
+            literal: 'Eliminar',
+            color: '#F44336'
         }
     };
     public showFilter: boolean = false;
@@ -68,20 +62,13 @@ export class DynamicTableComponent implements OnInit {
         pageSize: 10,
         pageSizeOptions: [5, 20, 50, 100]
     };
-
+    private inputConfig: InputConfig | undefined;
+    private groupingColumns: GroupingColumn[] = [];
+    private urlData = '';
+    private dataField: string | null = null;
+    private endFieldSticky: string | undefined;
     private paginator: MatPaginator | undefined;
-
-    @ViewChild(MatPaginator) set MatPaginator(mp: MatPaginator) {
-        this.paginator = mp;
-        this.dataSource.paginator = this.paginator;
-    }
-
     private sort: MatSort | undefined;
-
-    @ViewChild(MatSort) set MatSort(sr: MatSort) {
-        this.sort = sr;
-        this.dataSource.sort = this.sort;
-    }
 
     constructor(public dynamicTableService: DynamicTableService, public matGroupBy: MatGroupBy,
                 private dialog: MatDialog) {
@@ -93,10 +80,22 @@ export class DynamicTableComponent implements OnInit {
 
             this.loadConfiguration();
 
-            if (this.showOpExport || this.showOpCRUD || this.showOpSelect) {
-                this.columns = [...this.columns, 'op'];
-            }
+            if (this.showOpCRUD || this.showOpSelect) this.columns = [...this.columns, 'op'];
         });
+    }
+
+    @ViewChild(MatPaginator) set MatPaginator(mp: MatPaginator) {
+        this.paginator = mp;
+        this.dataSource.paginator = this.paginator;
+    }
+
+    @ViewChild(MatSort) set MatSort(sr: MatSort) {
+        this.sort = sr;
+        this.dataSource.sort = this.sort;
+    }
+
+    private static filterColumns(displayedColumns: Column[]): Column[] {
+        return displayedColumns.filter(elm => elm.show);
     }
 
     public ngOnInit(): void {
@@ -121,10 +120,6 @@ export class DynamicTableComponent implements OnInit {
         this.dynamicTableService.dataSourceObservable.subscribe(dataSource => this.dataSource = dataSource);
     }
 
-    private static filterColumns(displayedColumns: Column[]): Column[] {
-        return displayedColumns.filter(elm => elm.show);
-    }
-
     public option(Operation: TypeOpEvent, value?: number | string | any): void {
         if (Operation === TypeOpEvent.Delete) {
             const dialogRef = this.dialog.open(ConfirmMessageComponent);
@@ -134,10 +129,6 @@ export class DynamicTableComponent implements OnInit {
         } else {
             this.operationEvent.emit({type: Operation, value: value || null});
         }
-    }
-
-    public exportToCSV() {
-        this.exportCsvEvent.emit(true);
     }
 
     public canBeStartSticky(column: string): false | undefined | boolean {
@@ -155,7 +146,6 @@ export class DynamicTableComponent implements OnInit {
         if (!!this.inputConfig?.showOpNew) this.showOpNew = this.inputConfig.showOpNew;
         if (!!this.inputConfig?.showOpEdit) this.showOpEdit = this.inputConfig.showOpEdit;
         if (!!this.inputConfig?.showOpDelete) this.showOpDelete = this.inputConfig.showOpDelete;
-        if (!!this.inputConfig?.showOpExport) this.showOpExport = this.inputConfig.showOpExport;
         if (!!this.inputConfig?.showOpSelect) this.showOpSelect = this.inputConfig.showOpSelect;
         if (!!this.inputConfig?.canSticky) this.canSticky = this.inputConfig.canSticky;
         if (!!this.inputConfig?.startFieldSticky) this.startFieldSticky = this.inputConfig.startFieldSticky;

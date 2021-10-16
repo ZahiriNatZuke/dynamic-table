@@ -1,4 +1,4 @@
-import {NgModule, Injectable} from '@angular/core';
+import {Injectable, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BehaviorSubject} from 'rxjs';
 import {GroupingColumn} from '../utils/interfaces/grouping-column';
@@ -9,10 +9,13 @@ import {NestedPropertyPipe} from '../utils/pipes/nested-property.pipe';
 export class MatGroupBy {
 
     public groupingChange: BehaviorSubject<Grouping>;
+    private groupCache = new GroupCache<Group>();
 
     constructor() {
         this.groupingChange = new BehaviorSubject<Grouping>(this.grouping);
     }
+
+    private _grouping: Grouping | undefined;
 
     // @ts-ignore
     public get grouping(): Grouping {
@@ -24,9 +27,6 @@ export class MatGroupBy {
         this._grouping = grouping;
         this.groupingChange.next(this.grouping);
     }
-
-    private _grouping: Grouping | undefined;
-    private groupCache = new GroupCache<Group>();
 
     public isGroup(index: any, item: { level: boolean; }): boolean {
         return item.level;

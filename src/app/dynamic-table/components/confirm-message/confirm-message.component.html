@@ -1,13 +1,13 @@
 <h2 mat-dialog-title>{{ConfirmSettings.title}}</h2>
 <mat-divider></mat-divider>
 <mat-dialog-content class="mat-typography">
-    <div style="padding: 1rem 0" [innerHTML]="ConfirmSettings.content"></div>
+    <div [innerHTML]="ConfirmSettings.content" style="padding: 1rem 0"></div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-stroked-button [mat-dialog-close]="false" [color]="ConfirmSettings.Cancel.color">
+    <button [color]="ConfirmSettings.Cancel.color" [mat-dialog-close]="false" mat-stroked-button>
         {{ConfirmSettings.Cancel.literal}}
     </button>
-    <button mat-stroked-button [mat-dialog-close]="true" [color]="ConfirmSettings.Accept.color" cdkFocusInitial>
+    <button [color]="ConfirmSettings.Accept.color" [mat-dialog-close]="true" cdkFocusInitial mat-stroked-button>
         {{ConfirmSettings.Accept.literal}}
     </button>
 </mat-dialog-actions>

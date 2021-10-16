@@ -15,7 +15,6 @@ export interface InputConfig {
     showOpNew?: boolean,
     showOpEdit?: boolean,
     showOpDelete?: boolean,
-    showOpExport: boolean,
     dataField?: string,
     canSticky?: boolean,
     startFieldSticky?: string,

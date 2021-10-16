@@ -1,12 +1,12 @@
-<div [style.padding.rem]="1" [style.fontSize.px]="16">
+<div [style.fontSize.px]="16" [style.padding.rem]="1">
     <mat-form-field [style.width.%]="100">
-        <button matPrefix mat-icon-button (click)="reloadData()">
+        <button (click)="reloadData()" mat-icon-button matPrefix>
             <mat-icon [style.color]="FilterSettings.Reload.color">
                 {{FilterSettings.Reload.icon}}
             </mat-icon>
         </button>
-        <input matInput #filterInput>
-        <button *ngIf="filterInput.value" matSuffix mat-icon-button (click)="clearFilter()">
+        <input #filterInput matInput>
+        <button (click)="clearFilter()" *ngIf="filterInput.value" mat-icon-button matSuffix>
             <mat-icon>close</mat-icon>
         </button>
     </mat-form-field>

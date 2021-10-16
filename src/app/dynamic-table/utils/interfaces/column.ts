@@ -7,5 +7,10 @@ export interface Column {
 }
 
 export enum ColumnType {
-    Regular = 1, Concat = 2, Bullets = 3, Boolean = 4, Date = 5
+    Regular = 1,
+    Concat = 2,
+    Bullets = 3,
+    Boolean = 4,
+    Date = 5,
+    InnerHTML = 6
 }

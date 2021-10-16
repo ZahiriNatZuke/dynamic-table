@@ -3,29 +3,38 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {MatTableDataSource} from './lib/table-data-source';
 import {InputConfig} from './utils/interfaces/input-config';
-import {NestedPropertyPipe} from './utils/pipes/nested-property.pipe';
-import {Column, ColumnType} from './utils/interfaces/column';
-import {UtilCSV} from './lib/export-to-csv';
+import {Column} from './utils/interfaces/column';
 
 @Injectable({providedIn: 'root'})
 export class DynamicTableService {
 
-    // @ts-ignore
-    private _dataSource: BehaviorSubject<MatTableDataSource<any>> = new BehaviorSubject<MatTableDataSource<any>>(null);
-    private _dataTable: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    private _loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     // @ts-ignore
     private _inputConfig: BehaviorSubject<InputConfig> = new BehaviorSubject<InputConfig>(null);
 
     constructor(private _httpClient: HttpClient) {
     }
 
-    get dataSourceObservable(): Observable<MatTableDataSource<any>> {
-        return this._dataSource.asObservable();
-    }
+    // @ts-ignore
+    private _dataSource: BehaviorSubject<MatTableDataSource<any>> = new BehaviorSubject<MatTableDataSource<any>>(null);
 
     set dataSource(newData: MatTableDataSource<any>) {
         this._dataSource.next(newData);
+    }
+
+    private _dataTable: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+
+    set dataTable(newData: any[]) {
+        this._dataTable.next(newData);
+    }
+
+    private _loading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+    set loading(newStatus: boolean) {
+        this._loading.next(newStatus);
+    }
+
+    get dataSourceObservable(): Observable<MatTableDataSource<any>> {
+        return this._dataSource.asObservable();
     }
 
     set filterDataSource(filter: string) {
@@ -38,16 +47,8 @@ export class DynamicTableService {
         return this._dataTable.asObservable();
     }
 
-    set dataTable(newData: any[]) {
-        this._dataTable.next(newData);
-    }
-
     get loadingObservable(): Observable<boolean> {
         return this._loading.asObservable();
-    }
-
-    set loading(newStatus: boolean) {
-        this._loading.next(newStatus);
     }
 
     get configTableObservable(): Observable<InputConfig> {
@@ -82,40 +83,11 @@ export class DynamicTableService {
         else return '';
     }
 
-    public ExportDataToCSV(nameReport: string) {
-        const dataFiltered: Column[] = this.configTableValue.displayedColumns.filter(col => col.show);
-        const headers: string[] = dataFiltered.map(col => col.header);
-        let data = [...this._dataTable.value];
-        let dataCSV: any[] = [];
-        data.forEach(col => {
-            let obj: any = {};
-            headers.forEach((prop, index) => {
-                switch (dataFiltered[index].type) {
-                    case ColumnType.Regular:
-                        obj['"' + prop + '"'] = new NestedPropertyPipe().transform(col, dataFiltered[index].column) || '';
-                        break;
-                    case ColumnType.Concat:
-                        const valueConcat = new NestedPropertyPipe().transform(col, dataFiltered[index].column);
-                        obj['"' + prop + '"'] = this.mapData(valueConcat, dataFiltered[index].prop);
-                        break;
-                    case ColumnType.Bullets:
-                        const valueBullets = new NestedPropertyPipe().transform(col, dataFiltered[index].column);
-                        obj['"' + prop + '"'] = this.mapData(valueBullets, dataFiltered[index].prop, ';');
-                        break;
-                    case ColumnType.Boolean:
-                        const valueBoolean = new NestedPropertyPipe().transform(col, dataFiltered[index].column);
-                        obj['"' + prop + '"'] = valueBoolean ? 'Si' : 'No';
-                        break;
-                }
-            });
-            dataCSV.push(obj);
-        });
+    truncateAtWord(input: string, length: number) {
+        if (input === null || input.length < length) return input;
 
-        const options = {
-            quoteStrings: '"', useBom: true, noDownload: false, headers: headers, eol: '\n',
-        };
-
-        UtilCSV.prototype.exportDataCSV(dataCSV, nameReport, options);
+        const iNextSpace = input.lastIndexOf(' ', length);
+        return `${input.substring(0, iNextSpace > 0 ? iNextSpace : length).trim()} ...`;
     }
 
     public convertDateUTCToLocaleDateTime(dateUTC: any) {

@@ -14,8 +14,6 @@ export class FilterDatabaseComponent implements OnInit, AfterViewInit {
     // @ts-ignore
     @ViewChild('filterInput') filterInput: ElementRef<HTMLInputElement>;
     public dataTable: any[] = [];
-    private urlData: string = '';
-    private dataField: string | null = null;
     public FilterSettings: FilterSettings = {
         debounceTime: 350,
         Reload: {
@@ -23,6 +21,8 @@ export class FilterDatabaseComponent implements OnInit, AfterViewInit {
             color: 'orange'
         }
     };
+    private urlData: string = '';
+    private dataField: string | null = null;
 
     constructor(private dynamicTableService: DynamicTableService) {
     }

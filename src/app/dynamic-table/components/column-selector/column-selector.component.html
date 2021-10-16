@@ -1,7 +1,7 @@
-<section class="section-container" (click)="$event.stopPropagation()">
+<section (click)="$event.stopPropagation()" class="section-container">
     <mat-form-field [appearance]="SelectorSettings.appearance">
         <mat-label>{{SelectorSettings.label}}</mat-label>
-        <mat-select multiple [(ngModel)]="selectedValues" (selectionChange)="catchChanges()">
+        <mat-select (selectionChange)="catchChanges()" [(ngModel)]="selectedValues" multiple>
             <mat-select-trigger>
                 {{selectedValues.length > 0 ? selectedValues[0] : ''}}
                 <span *ngIf="selectedValues.length > 1" class="additional-selection">

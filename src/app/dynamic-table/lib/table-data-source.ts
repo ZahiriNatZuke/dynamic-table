@@ -8,18 +8,11 @@
 
 import {_isNumberValue} from '@angular/cdk/coercion';
 import {DataSource} from '@angular/cdk/table';
-import {
-    BehaviorSubject,
-    combineLatest,
-    merge,
-    Observable,
-    of as observableOf,
-    Subscription
-} from 'rxjs';
+import {BehaviorSubject, combineLatest, merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort, Sort} from '@angular/material/sort';
 import {map} from 'rxjs/operators';
-import {MatGroupBy, Grouping, Group} from './group-by';
+import {Group, Grouping, MatGroupBy} from './group-by';
 
 /**
  * Corresponds to `Number.MAX_SAFE_INTEGER`. Moved out into a variable here due to
@@ -36,21 +29,11 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * which defines how row data is converted to a string for filter matching.
  */
 export class MatTableDataSource<T> extends DataSource<(T | Group)> {
-    /** Stream that emits when a new data array is set on the data source. */
-    private readonly _data: BehaviorSubject<T[]>;
-
-    /** Stream emitting render data to the table (depends on ordered data changes). */
-    private readonly _renderData = new BehaviorSubject<(T | Group)[]>([]);
-
-    /** Stream that emits when a new filter string is set on the data source. */
-    private readonly _filter = new BehaviorSubject<string>('');
-
     /**
      * Subscription to the changes that should trigger an update to the table's rendered rows, such
      * as filtering, sorting, pagination, or base data changes.
      */
     _renderChangesSubscription = Subscription.EMPTY;
-
     /**
      * The filtered set of data that has been matched by the filter string, or all the data if there
      * is no filter. Useful for knowing the set of data the table represents.
@@ -58,7 +41,18 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
      * shown to the user rather than all the data.
      */
     filteredData: T[] | undefined;
+    /** Stream that emits when a new data array is set on the data source. */
+    private readonly _data: BehaviorSubject<T[]>;
+    /** Stream emitting render data to the table (depends on ordered data changes). */
+    private readonly _renderData = new BehaviorSubject<(T | Group)[]>([]);
+    /** Stream that emits when a new filter string is set on the data source. */
+    private readonly _filter = new BehaviorSubject<string>('');
 
+    constructor(initialData: T[] = []) {
+        super();
+        this._data = new BehaviorSubject<T[]>(initialData);
+        this._updateChangeSubscription();
+    }
 
     /** Array of data that should be rendered by the table, where each object represents one row. */
     // @ts-ignore
@@ -85,6 +79,8 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
         this._filter.next(filter);
     }
 
+    private _sort: MatSort | null | undefined;
+
     /**
      * Instance of the MatSort directive used by the table to control its sorting. Sort changes
      * emitted by the MatSort will trigger an update to the table's rendered data.
@@ -100,7 +96,7 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
         this._updateChangeSubscription();
     }
 
-    private _sort: MatSort | null | undefined;
+    private _paginator: MatPaginator | null | undefined;
 
     /**
      * Instance of the MatPaginator component used by the table to control what page of the data is
@@ -123,8 +119,7 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
         this._updateChangeSubscription();
     }
 
-    private _paginator: MatPaginator | null | undefined;
-
+    private _groupBy: MatGroupBy | null | undefined;
 
     /**
      * Instance of the MatGroupBy component used to add group headers to the data. Grouping changes
@@ -140,8 +135,6 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
         this._groupBy = groupBy;
         this._updateChangeSubscription();
     }
-
-    private _groupBy: MatGroupBy | null | undefined;
 
     /**
      * Data accessor function that is used for accessing data properties for sorting through
@@ -230,12 +223,6 @@ export class MatTableDataSource<T> extends DataSource<(T | Group)> {
 
         return dataStr.indexOf(transformedFilter) != -1;
     };
-
-    constructor(initialData: T[] = []) {
-        super();
-        this._data = new BehaviorSubject<T[]>(initialData);
-        this._updateChangeSubscription();
-    }
 
     /**
      * Subscribe to changes that should trigger an update to the table's rendered rows. When the
