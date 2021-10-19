@@ -1,11 +1,12 @@
 export interface OptionSettings {
     iconNew: string,
-    Update: IconSettings,
-    Delete: IconSettings
+    eventNew: string,
+    options: ButtonSettings[]
 }
 
-export interface IconSettings {
+export interface ButtonSettings {
     icon: string,
     literal: string,
-    color: string
+    color: string,
+    event: string
 }

@@ -8,13 +8,11 @@ import {Observable} from 'rxjs';
 import {Column, ColumnType} from './utils/interfaces/column';
 import {GroupingColumn} from './utils/interfaces/grouping-column';
 import {InputConfig} from './utils/interfaces/input-config';
-import {OperationEvent, TypeOpEvent} from './utils/interfaces/operation-event';
+import {OperationEvent} from './utils/interfaces/operation-event';
 import {NestedPropertyPipe} from './utils/pipes/nested-property.pipe';
 import {OptionSettings} from './utils/interfaces/option-settings';
 import {SpinnerSettings} from './utils/interfaces/spinner-settings';
 import {PaginatorSettings} from './utils/interfaces/paginator-settings';
-import {MatDialog} from '@angular/material/dialog';
-import {ConfirmMessageComponent} from './components/confirm-message/confirm-message.component';
 
 @Component({
     selector: 'dynamic-table',
@@ -28,28 +26,30 @@ export class DynamicTableComponent implements OnInit {
     public isLoading$ = new Observable<boolean>();
 
     public columnType = ColumnType;
-    public typeOpEvent = TypeOpEvent;
     public displayedColumns: Column[] = [];
     public columns: string[] = [];
-    public showOpCRUD = false;
+    public showOptions = false;
     public showOpNew: boolean | undefined = false;
-    public showOpEdit: boolean | undefined = false;
-    public showOpDelete: boolean | undefined = false;
     public showOpSelect: boolean | undefined = false;
     public canSticky: boolean | undefined = false;
     public startFieldSticky: string | undefined;
     public OptionSettings: OptionSettings = {
-        iconNew: 'add_circle',
-        Update: {
-            icon: 'edit',
-            literal: 'Actualizar',
-            color: '#388E3C'
-        },
-        Delete: {
-            icon: 'delete',
-            literal: 'Eliminar',
-            color: '#F44336'
-        }
+        iconNew: 'add_circle_outlined',
+        eventNew: 'Create',
+        options: [
+            {
+                icon: 'edit',
+                literal: 'Update',
+                color: '#388E3C',
+                event: 'Update'
+            },
+            {
+                icon: 'delete_outlined',
+                literal: 'Delete',
+                color: '#F44336',
+                event: 'Delete'
+            }
+        ]
     };
     public showFilter: boolean = false;
     public SpinnerSettings: SpinnerSettings = {
@@ -70,8 +70,7 @@ export class DynamicTableComponent implements OnInit {
     private paginator: MatPaginator | undefined;
     private sort: MatSort | undefined;
 
-    constructor(public dynamicTableService: DynamicTableService, public matGroupBy: MatGroupBy,
-                private dialog: MatDialog) {
+    constructor(public dynamicTableService: DynamicTableService, public matGroupBy: MatGroupBy) {
         this.isLoading$ = this.dynamicTableService.loadingObservable;
         this.dynamicTableService.configTableObservable.subscribe(config => {
             this.inputConfig = config;
@@ -80,7 +79,7 @@ export class DynamicTableComponent implements OnInit {
 
             this.loadConfiguration();
 
-            if (this.showOpCRUD || this.showOpSelect) this.columns = [...this.columns, 'op'];
+            if (this.showOptions || this.showOpSelect) this.columns = [...this.columns, 'op'];
         });
     }
 
@@ -120,15 +119,8 @@ export class DynamicTableComponent implements OnInit {
         this.dynamicTableService.dataSourceObservable.subscribe(dataSource => this.dataSource = dataSource);
     }
 
-    public option(Operation: TypeOpEvent, value?: number | string | any): void {
-        if (Operation === TypeOpEvent.Delete) {
-            const dialogRef = this.dialog.open(ConfirmMessageComponent);
-            dialogRef.afterClosed().subscribe(result => {
-                if (result) this.operationEvent.emit({type: Operation, value: value || null});
-            });
-        } else {
-            this.operationEvent.emit({type: Operation, value: value || null});
-        }
+    public option(operation: string, value: any = null): void {
+        this.operationEvent.emit({type: operation, value: value});
     }
 
     public canBeStartSticky(column: string): false | undefined | boolean {
@@ -142,10 +134,7 @@ export class DynamicTableComponent implements OnInit {
     public loadConfiguration(): void {
         if (!!this.inputConfig?.groupingColumns) this.groupingColumns = this.inputConfig.groupingColumns;
         if (!!this.inputConfig?.urlData) this.urlData = this.inputConfig.urlData;
-        if (!!this.inputConfig?.showOpCRUD) this.showOpCRUD = this.inputConfig.showOpCRUD;
-        if (!!this.inputConfig?.showOpNew) this.showOpNew = this.inputConfig.showOpNew;
-        if (!!this.inputConfig?.showOpEdit) this.showOpEdit = this.inputConfig.showOpEdit;
-        if (!!this.inputConfig?.showOpDelete) this.showOpDelete = this.inputConfig.showOpDelete;
+        if (!!this.inputConfig?.showOptions) this.showOptions = this.inputConfig.showOptions;
         if (!!this.inputConfig?.showOpSelect) this.showOpSelect = this.inputConfig.showOpSelect;
         if (!!this.inputConfig?.canSticky) this.canSticky = this.inputConfig.canSticky;
         if (!!this.inputConfig?.startFieldSticky) this.startFieldSticky = this.inputConfig.startFieldSticky;

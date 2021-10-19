@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {InputConfig} from './dynamic-table/utils/interfaces/input-config';
 import {ColumnType} from './dynamic-table/utils/interfaces/column';
 import {DynamicTableService} from './dynamic-table/dynamic-table.service';
-import {OperationEvent, TypeOpEvent} from './dynamic-table/utils/interfaces/operation-event';
+import {OperationEvent} from './dynamic-table/utils/interfaces/operation-event';
 
 @Component({
     selector: 'app-root',
@@ -53,23 +53,26 @@ export class AppComponent implements OnInit {
             },
         ],
         groupingColumns: [],
-        showOpCRUD: true,
-        showOpEdit: true,
-        urlData: this.urlData,
         showOpNew: true,
-        showOpDelete: true,
+        showOptions: true,
+        urlData: this.urlData,
         OptionSettings: {
             iconNew: 'add_circle_outlined',
-            Update: {
-                icon: 'edit',
-                literal: 'Update',
-                color: '#388E3C'
-            },
-            Delete: {
-                icon: 'delete_outlined',
-                literal: 'Delete',
-                color: '#F44336'
-            }
+            eventNew: 'Create',
+            options: [
+                {
+                    icon: 'edit',
+                    literal: 'Update',
+                    color: '#388E3C',
+                    event: 'Update'
+                },
+                {
+                    icon: 'delete_outlined',
+                    literal: 'Delete',
+                    color: '#F44336',
+                    event: 'Delete'
+                }
+            ]
         },
         SpinnerSettings: {
             color: 'primary',
@@ -121,12 +124,7 @@ export class AppComponent implements OnInit {
 
     public triggerOption(event: OperationEvent): void {
         switch (event.type) {
-            case TypeOpEvent.New:
-                break;
-            case TypeOpEvent.Update:
-                break;
-            case TypeOpEvent.Delete:
-                break;
+
         }
     }
 }
