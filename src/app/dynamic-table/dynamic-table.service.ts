@@ -83,7 +83,7 @@ export class DynamicTableService {
         else return '';
     }
 
-    truncateAtWord(input: string, length: number) {
+    public truncateAtWord(input: string, length: number) {
         if (input === null || input.length < length) return input;
 
         const iNextSpace = input.lastIndexOf(' ', length);

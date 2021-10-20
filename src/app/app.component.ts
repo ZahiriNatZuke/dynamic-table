@@ -12,42 +12,42 @@ import {OperationEvent} from './dynamic-table/utils/interfaces/operation-event';
 export class AppComponent implements OnInit {
 
     public dataTable: any[] = [];
-    private urlData: string = 'http://localhost:3000/people';
+    private urlData: string = 'https://jsonplaceholder.typicode.com/users';
     public inputConfig: InputConfig = {
         displayedColumns: [
             {
-                header: 'surname',
-                column: 'surname',
+                header: 'Full Name',
+                column: 'name',
                 show: true,
                 type: ColumnType.Regular
             },
             {
-                header: 'forename',
-                column: 'forename',
+                header: 'Username',
+                column: 'username',
                 show: true,
                 type: ColumnType.Regular
             },
             {
-                header: 'gender',
-                column: 'gender',
+                header: 'Email',
+                column: 'email',
                 show: true,
                 type: ColumnType.Regular
             },
             {
-                header: 'ukCity',
-                column: 'ukCity',
+                header: 'Website',
+                column: 'website',
                 show: true,
                 type: ColumnType.Regular
             },
             {
-                header: 'salary',
-                column: 'salary',
+                header: 'City',
+                column: 'address.city',
                 show: true,
                 type: ColumnType.Regular
             },
             {
-                header: 'department',
-                column: 'department',
+                header: 'Phone',
+                column: 'phone',
                 show: true,
                 type: ColumnType.Regular
             },
