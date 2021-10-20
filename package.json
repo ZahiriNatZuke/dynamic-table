@@ -1,6 +1,6 @@
 {
     "name": "dynamic-table",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "keywords": [
         "table",
         "dynamic",
@@ -12,7 +12,7 @@
     "license": "MIT",
     "scripts": {
         "ng": "ng",
-        "start": " ng serve -o",
+        "start": " ng serve",
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",

@@ -30,4 +30,6 @@ export class ColumnSelectorComponent {
         this.columnList.forEach(col => col.show = this.selectedValues.includes(col.column));
         this.dynamicTableService.updateColumnsShow = this.columnList;
     }
+
+    getHeader = (column: string) => this.columnList.find(col => col.column === column)?.header;
 }

@@ -3,7 +3,7 @@
         <mat-label>{{SelectorSettings.label}}</mat-label>
         <mat-select (selectionChange)="catchChanges()" [(ngModel)]="selectedValues" multiple>
             <mat-select-trigger>
-                {{selectedValues.length > 0 ? selectedValues[0] : ''}}
+                {{selectedValues.length > 0 ? getHeader(selectedValues[0]) : ''}}
                 <span *ngIf="selectedValues.length > 1" class="additional-selection">
                     (+{{selectedValues.length - 1}}
                     {{selectedValues.length === 2 ? SelectorSettings.singularLiteral : SelectorSettings.pluralLiteral}})
