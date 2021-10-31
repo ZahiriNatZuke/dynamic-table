@@ -41,7 +41,7 @@
                         </ng-container>
 
                         <ng-container *ngSwitchCase="columnType.Date">
-                            <span>{{(element | nestedProperty:column.column) | date: 'dd/mm/yy':''}}</span>
+                            <span>{{(element | nestedProperty:column.column) | date: 'shortDate'}}</span>
                         </ng-container>
 
                         <ng-container *ngSwitchCase="columnType.InnerHTML">

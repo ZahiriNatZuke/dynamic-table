@@ -124,7 +124,11 @@ export class AppComponent implements OnInit {
 
     public triggerOption(event: OperationEvent): void {
         switch (event.type) {
-
+            case 'Delete':
+                this.dynamicTableService.openConfirmDialog().subscribe((result) => {
+                    if (result) console.log('Item Eliminated');
+                });
+                break;
         }
     }
 }

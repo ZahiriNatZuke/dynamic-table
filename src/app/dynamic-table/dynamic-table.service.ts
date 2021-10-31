@@ -4,6 +4,8 @@ import {HttpClient} from '@angular/common/http';
 import {MatTableDataSource} from './lib/table-data-source';
 import {InputConfig} from './utils/interfaces/input-config';
 import {Column} from './utils/interfaces/column';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmMessageComponent} from './components/confirm-message/confirm-message.component';
 
 @Injectable({providedIn: 'root'})
 export class DynamicTableService {
@@ -11,7 +13,7 @@ export class DynamicTableService {
     // @ts-ignore
     private _inputConfig: BehaviorSubject<InputConfig> = new BehaviorSubject<InputConfig>(null);
 
-    constructor(private _httpClient: HttpClient) {
+    constructor(private _httpClient: HttpClient, private _matDialog: MatDialog) {
     }
 
     // @ts-ignore
@@ -90,9 +92,8 @@ export class DynamicTableService {
         return `${input.substring(0, iNextSpace > 0 ? iNextSpace : length).trim()} ...`;
     }
 
-    public convertDateUTCToLocaleDateTime(dateUTC: any) {
-        if (dateUTC === undefined || dateUTC === null) return;
-        dateUTC = dateUTC.replace('Z', '');
-        return new Date(dateUTC + 'Z').toLocaleDateString() + ' ' + new Date(dateUTC + 'Z').toLocaleTimeString();
+    public openConfirmDialog() {
+        const dialog = this._matDialog.open(ConfirmMessageComponent);
+        return dialog.afterClosed();
     }
 }
