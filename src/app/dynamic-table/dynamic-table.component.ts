@@ -34,7 +34,7 @@ export class DynamicTableComponent implements OnInit {
     public canSticky: boolean | undefined = false;
     public startFieldSticky: string | undefined;
     public OptionSettings: OptionSettings = {
-        iconNew: 'add_circle_outlined',
+        iconNew: 'add_circle_outline',
         eventNew: 'Create',
         options: [
             {
@@ -44,7 +44,7 @@ export class DynamicTableComponent implements OnInit {
                 event: 'Update'
             },
             {
-                icon: 'delete_outlined',
+                icon: 'delete_outline',
                 literal: 'Delete',
                 color: '#F44336',
                 event: 'Delete'
@@ -135,6 +135,7 @@ export class DynamicTableComponent implements OnInit {
         if (!!this.inputConfig?.groupingColumns) this.groupingColumns = this.inputConfig.groupingColumns;
         if (!!this.inputConfig?.urlData) this.urlData = this.inputConfig.urlData;
         if (!!this.inputConfig?.showOptions) this.showOptions = this.inputConfig.showOptions;
+        if (!!this.inputConfig?.showOpNew) this.showOpNew = this.inputConfig.showOpNew;
         if (!!this.inputConfig?.showOpSelect) this.showOpSelect = this.inputConfig.showOpSelect;
         if (!!this.inputConfig?.canSticky) this.canSticky = this.inputConfig.canSticky;
         if (!!this.inputConfig?.startFieldSticky) this.startFieldSticky = this.inputConfig.startFieldSticky;
